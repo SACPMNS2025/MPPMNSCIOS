@@ -9,7 +9,8 @@ main: mppmns.exe
 mppmns.exe: mppmns.c mpparams.h
 	$(CC) -o mppmns.exe mppmns.c -g -Wall -Wextra -O3 -funswitch-loops -funroll-loops -fno-tree-vectorize -fwhole-program
 
-	
+avx512mppmns.exe: avx512mppmns.c avx512params.h
+	$(CC) -o avx512mppmns.exe avx512mppmns.c -g -Wall -Wextra -O3 -funswitch-loops -funroll-loops -fno-tree-vectorize -fwhole-program -march=native
 
 table5:
 	@mv mpparams.h tmpparams.h 2>/dev/null || true
@@ -89,3 +90,69 @@ table5:
 	@$(CC) -o gmpopenssl.exe gmpopenssl.c -g -Wall -Wextra -O3 -funswitch-loops -funroll-loops -fno-tree-vectorize -fwhole-program -D LOG2P=8192 -lgmp -lcrypto && ./gmpopenssl.exe
 	@rm mpparams.h
 	@mv tmpparams.h mpparams.h 2>/dev/null || true
+
+table6:
+	@mv avx512params.h tavx512params.h 2>/dev/null || true
+	@echo 1024 bit primes
+	@cp tableparams/avx512params_1024_2.h avx512params.h
+	@echo s = 2
+	@make -B avx512mppmns.exe >/dev/null
+	@./avx512mppmns.exe
+	@cp tableparams/avx512params_1024_3.h avx512params.h
+	@echo s = 3
+	@make -B avx512mppmns.exe >/dev/null
+	@./avx512mppmns.exe
+	@echo
+	@echo 2048 bit primes
+	@cp tableparams/avx512params_2048_2.h avx512params.h
+	@echo s = 2
+	@make -B avx512mppmns.exe >/dev/null
+	@./avx512mppmns.exe
+	@cp tableparams/avx512params_2048_3.h avx512params.h
+	@echo s = 3
+	@make -B avx512mppmns.exe >/dev/null
+	@./avx512mppmns.exe
+	@echo
+	@echo 4096 bit primes
+	@cp tableparams/avx512params_4096_2.h avx512params.h
+	@echo s = 2
+	@make -B avx512mppmns.exe >/dev/null
+	@./avx512mppmns.exe
+	@cp tableparams/avx512params_4096_3.h avx512params.h
+	@echo s = 3
+	@make -B avx512mppmns.exe >/dev/null
+	@./avx512mppmns.exe
+	@cp tableparams/avx512params_4096_4.h avx512params.h
+	@echo s = 4
+	@make -B avx512mppmns.exe >/dev/null
+	@./avx512mppmns.exe
+	@echo
+	@echo 6144 bit primes
+	@cp tableparams/avx512params_6144_2.h avx512params.h
+	@echo s = 2
+	@make -B avx512mppmns.exe >/dev/null
+	@./avx512mppmns.exe
+	@cp tableparams/avx512params_6144_3.h avx512params.h
+	@echo s = 3
+	@make -B avx512mppmns.exe >/dev/null
+	@./avx512mppmns.exe
+	@cp tableparams/avx512params_6144_4.h avx512params.h
+	@echo s = 4
+	@make -B avx512mppmns.exe >/dev/null
+	@./avx512mppmns.exe
+	@echo
+	@echo 8192 bit primes
+	@cp tableparams/avx512params_8192_2.h avx512params.h
+	@echo s = 2
+	@make -B avx512mppmns.exe >/dev/null
+	@./avx512mppmns.exe
+	@cp tableparams/avx512params_8192_3.h avx512params.h
+	@echo s = 3
+	@make -B avx512mppmns.exe >/dev/null
+	@./avx512mppmns.exe
+	@cp tableparams/avx512params_8192_4.h avx512params.h
+	@echo s = 4
+	@make -B avx512mppmns.exe >/dev/null
+	@./avx512mppmns.exe
+	@rm avx512params.h
+	@mv tavx512params.h avx512params.h 2>/dev/null || true
