@@ -141,3 +141,24 @@ table6:
 	@./avx512mppmns.exe
 	@rm avx512params.h
 	@mv tavx512params.h avx512params.h 2>/dev/null || true
+
+table7:
+	@mv avx512params.h tavx512params.h 2>/dev/null || true
+	@echo 1024 bit primes
+	@cp tableparams/avx512params_1024_3.h avx512params.h
+	@make -B avx512mppmns.exe >/dev/null
+	@./avx512mppmns.exe
+	@$(CC) -o opensslavx512.exe opensslavx512.c rsaz-2k-avx512.s -g -Wall -Wextra -O3 -funswitch-loops -funroll-loops -fno-tree-vectorize -march=native -D LOG2P=1024 -lgmp -lcrypto -flto && ./opensslavx512.exe
+	@echo 1536 bit primes
+	@cp tableparams/avx512params_1536_5.h avx512params.h
+	@make -B avx512mppmns.exe >/dev/null
+	@./avx512mppmns.exe
+	@$(CC) -o opensslavx512.exe opensslavx512.c rsaz-3k-avx512.s -g -Wall -Wextra -O3 -funswitch-loops -funroll-loops -fno-tree-vectorize -march=native -D LOG2P=1536 -lgmp -lcrypto -flto && ./opensslavx512.exe
+	@echo 2048 bit primes
+	@cp tableparams/avx512params_2048_3.h avx512params.h
+	@make -B avx512mppmns.exe >/dev/null
+	@./avx512mppmns.exe
+	@$(CC) -o opensslavx512.exe opensslavx512.c rsaz-4k-avx512.s -g -Wall -Wextra -O3 -funswitch-loops -funroll-loops -fno-tree-vectorize -march=native -D LOG2P=2048 -lgmp -lcrypto -flto && ./opensslavx512.exe
+	@rm avx512params.h
+	@mv tavx512params.h avx512params.h 2>/dev/null || true
+
