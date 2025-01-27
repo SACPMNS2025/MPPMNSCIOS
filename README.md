@@ -11,7 +11,7 @@ To run the benchmark for table 5:
 Similarly, to run the benchmark for table 6 (your processor needs the cpuflag avx512ifma or the code won't run):
 > make table6
 
-Similarly, to run the benchmark for table 7 (your processor needs the cpuflag avx512ifma or the code won't run):
-> make table7
+Similarly, to run the benchmark for table 8 (your processor needs the cpuflag avx512ifma or the code won't run):
+> make table8
 
 We also make a multi-precision PMNS generation code available as well as an accompanying parameter generation script. To use them, you will need the SageMath library which can be found here: http://www.sagemath.org/
