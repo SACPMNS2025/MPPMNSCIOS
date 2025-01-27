@@ -3,7 +3,7 @@
 CURRENTLY IN CONSTRUCTION
 
 This folder contains the code used to measure cycle counts in the relevant tables in the "Multi-precision PMNS with CIOS reduction" paper. You will need GCC and GnuMP to compile the codes. For the performances to be accurate on intel processors the Turbo Boost® needs to be disabled. For linux we provide the script "disableturboboost.sh" to disable the turbo boost. To run it:
-> sudo ./disableturboboost.sh
+> chmod +x disableturboboost.sh && sudo ./disableturboboost.sh
 
 To run the benchmark for table 5:
 > make table5
