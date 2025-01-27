@@ -142,7 +142,7 @@ table6:
 	@rm avx512params.h
 	@mv tavx512params.h avx512params.h 2>/dev/null || true
 
-table7:
+table8:
 	@mv avx512params.h tavx512params.h 2>/dev/null || true
 	@echo 1024 bit primes
 	@cp tableparams/avx512params_1024_3.h avx512params.h
