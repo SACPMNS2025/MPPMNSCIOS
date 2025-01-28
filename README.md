@@ -16,16 +16,19 @@ Similarly, to run the benchmark for table 8 (your processor needs the cpuflag av
 Similarly, to run the benchmark for table 9 (your processor needs the cpuflag avx512ifma or the code won't run):
 > make table9
 
+## Generation
+We also make a multi-precision PMNS generation code available as well as an accompanying parameter generation script. To use them, you will need the SageMath library which can be found here: http://www.sagemath.org/
+
+The generation code is currently functional but needs file editing to use as is. In the short future it will be usable directly from the command line.
+
+
 ## Correctness and bounds check
-This repository also contains code to check that each PMNS is valid and has correct parameter consistency. The checks are split by table in the makefile but the code is a simple python script that can be reused as needed.
+This repository also contains code to check that each PMNS is valid and has correct parameter consistency. The code relies on the SageMath library which can be found here: http://www.sagemath.org/
+
+The checks are split by table in the makefile but the code is a simple python script that can be reused as needed.
 
 To check that the PMNS used in table X are valid and that operations don't produce results whose coefficients are more than rho simply run:
 > make checktableX
 
 For example for table 5:
 > make checktable5
-
-## Generation
-We also make a multi-precision PMNS generation code available as well as an accompanying parameter generation script. To use them, you will need the SageMath library which can be found here: http://www.sagemath.org/
-
-The generation code is currently functional but needs file editing to use as is. In the short future it will be usable directly from the command line.
