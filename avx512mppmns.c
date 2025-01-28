@@ -354,7 +354,7 @@ uint64_t do_bench(void (*pmns_mult)(restrict mppoly, const restrict mppoly, cons
 		medianTimer += statTimer[1];
 		free(statTimer);
 	}
-
+	
 	printf("                                          \r");
 	
 	free(cycles);
@@ -385,7 +385,9 @@ int main(void)
 	time_t seed;
 	srand((unsigned) (time(&seed)));
 	
+	#ifndef NOBENCH
 	printf("This work: %ld\n", do_bench(pmns_montg_mult, 33));
+	#endif
 	
 	FILE *fpointer = fopen("avx512log", "w+");
 	fclose(fpointer);
