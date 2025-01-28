@@ -201,3 +201,79 @@ table9:
 	@echo
 	@rm avx512params.h
 	@mv tavx512params.h avx512params.h 2>/dev/null || true
+
+checktable5:
+	@mv mpparams.h tmpparams.h 2>/dev/null || true
+	@echo 1024 bit primes
+	@cp tableparams/mpparams_1024_2.h mpparams.h
+	@$(CC) -o mppmns.exe mppmns.c -g -Wall -Wextra -O3 -funswitch-loops -funroll-loops -fno-tree-vectorize -fwhole-program -D NOBENCH
+	@./mppmns.exe
+	@export PSIZE=1024 && export NBCHUNKS=2 && python3 check.py
+	@cp tableparams/mpparams_1024_3.h mpparams.h
+	@$(CC) -o mppmns.exe mppmns.c -g -Wall -Wextra -O3 -funswitch-loops -funroll-loops -fno-tree-vectorize -fwhole-program -D NOBENCH
+	@./mppmns.exe
+	@export PSIZE=1024 && export NBCHUNKS=3 && python3 check.py
+	@cp tableparams/mpparams_1024_4.h mpparams.h
+	@$(CC) -o mppmns.exe mppmns.c -g -Wall -Wextra -O3 -funswitch-loops -funroll-loops -fno-tree-vectorize -fwhole-program -D NOBENCH
+	@./mppmns.exe
+	@export PSIZE=1024 && export NBCHUNKS=4 && python3 check.py
+	@echo
+	@echo 2048 bit primes
+	@cp tableparams/mpparams_2048_2.h mpparams.h
+	@$(CC) -o mppmns.exe mppmns.c -g -Wall -Wextra -O3 -funswitch-loops -funroll-loops -fno-tree-vectorize -fwhole-program -D NOBENCH
+	@./mppmns.exe
+	@export PSIZE=2048 && export NBCHUNKS=2 && python3 check.py
+	@cp tableparams/mpparams_2048_3.h mpparams.h
+	@$(CC) -o mppmns.exe mppmns.c -g -Wall -Wextra -O3 -funswitch-loops -funroll-loops -fno-tree-vectorize -fwhole-program -D NOBENCH
+	@./mppmns.exe
+	@export PSIZE=2048 && export NBCHUNKS=3 && python3 check.py
+	@cp tableparams/mpparams_2048_4.h mpparams.h
+	@$(CC) -o mppmns.exe mppmns.c -g -Wall -Wextra -O3 -funswitch-loops -funroll-loops -fno-tree-vectorize -fwhole-program -D NOBENCH
+	@./mppmns.exe
+	@export PSIZE=2048 && export NBCHUNKS=4 && python3 check.py
+	@echo
+	@echo 4096 bit primes
+	@cp tableparams/mpparams_4096_2.h mpparams.h
+	@$(CC) -o mppmns.exe mppmns.c -g -Wall -Wextra -O3 -funswitch-loops -funroll-loops -fno-tree-vectorize -fwhole-program -D NOBENCH
+	@./mppmns.exe
+	@export PSIZE=4096 && export NBCHUNKS=2 && python3 check.py
+	@cp tableparams/mpparams_4096_3.h mpparams.h
+	@$(CC) -o mppmns.exe mppmns.c -g -Wall -Wextra -O3 -funswitch-loops -funroll-loops -fno-tree-vectorize -fwhole-program -D NOBENCH
+	@./mppmns.exe
+	@export PSIZE=4096 && export NBCHUNKS=3 && python3 check.py
+	@cp tableparams/mpparams_4096_4.h mpparams.h
+	@$(CC) -o mppmns.exe mppmns.c -g -Wall -Wextra -O3 -funswitch-loops -funroll-loops -fno-tree-vectorize -fwhole-program -D NOBENCH
+	@./mppmns.exe
+	@export PSIZE=4096 && export NBCHUNKS=4 && python3 check.py
+	@echo
+	@echo 6144 bit primes
+	@cp tableparams/mpparams_6144_2.h mpparams.h
+	@$(CC) -o mppmns.exe mppmns.c -g -Wall -Wextra -O3 -funswitch-loops -funroll-loops -fno-tree-vectorize -fwhole-program -D NOBENCH
+	@./mppmns.exe
+	@export PSIZE=6144 && export NBCHUNKS=2 && python3 check.py
+	@cp tableparams/mpparams_6144_3.h mpparams.h
+	@$(CC) -o mppmns.exe mppmns.c -g -Wall -Wextra -O3 -funswitch-loops -funroll-loops -fno-tree-vectorize -fwhole-program -D NOBENCH
+	@./mppmns.exe
+	@export PSIZE=6144 && export NBCHUNKS=3 && python3 check.py
+	@cp tableparams/mpparams_6144_4.h mpparams.h
+	@$(CC) -o mppmns.exe mppmns.c -g -Wall -Wextra -O3 -funswitch-loops -funroll-loops -fno-tree-vectorize -fwhole-program -D NOBENCH
+	@./mppmns.exe
+	@export PSIZE=6144 && export NBCHUNKS=4 && python3 check.py
+	@echo
+	@echo 8192 bit primes
+	@cp tableparams/mpparams_8192_2.h mpparams.h
+	@$(CC) -o mppmns.exe mppmns.c -g -Wall -Wextra -O3 -funswitch-loops -funroll-loops -fno-tree-vectorize -fwhole-program -D NOBENCH
+	@./mppmns.exe
+	@export PSIZE=8192 && export NBCHUNKS=2 && python3 check.py
+	@cp tableparams/mpparams_8192_3.h mpparams.h
+	@$(CC) -o mppmns.exe mppmns.c -g -Wall -Wextra -O3 -funswitch-loops -funroll-loops -fno-tree-vectorize -fwhole-program -D NOBENCH
+	@./mppmns.exe
+	@export PSIZE=8192 && export NBCHUNKS=3 && python3 check.py
+	@cp tableparams/mpparams_8192_4.h mpparams.h
+	@$(CC) -o mppmns.exe mppmns.c -g -Wall -Wextra -O3 -funswitch-loops -funroll-loops -fno-tree-vectorize -fwhole-program -D NOBENCH
+	@./mppmns.exe
+	@export PSIZE=8192 && export NBCHUNKS=4 && python3 check.py
+	@echo
+	@rm mpparams.h
+	@mv tmpparams.h mpparams.h 2>/dev/null || true
+
