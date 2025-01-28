@@ -162,3 +162,42 @@ table8:
 	@rm avx512params.h
 	@mv tavx512params.h avx512params.h 2>/dev/null || true
 
+table9:
+	@mv avx512params.h tavx512params.h 2>/dev/null || true
+	@echo 807 bit primes
+	@cp tableparams/avx512params_807_3.h avx512params.h
+	@make -B avx512mppmns.exe >/dev/null
+	@./avx512mppmns.exe
+	@echo
+	@echo 1214 bit primes
+	@cp tableparams/avx512params_1214_2.h avx512params.h
+	@make -B avx512mppmns.exe >/dev/null
+	@./avx512mppmns.exe
+	@echo
+	@echo 1621 bit primes
+	@cp tableparams/avx512params_1621_2.h avx512params.h
+	@make -B avx512mppmns.exe >/dev/null
+	@./avx512mppmns.exe
+	@echo
+	@echo 2029 bit primes
+	@cp tableparams/avx512params_2029_2.h avx512params.h
+	@make -B avx512mppmns.exe >/dev/null
+	@./avx512mppmns.exe
+	@echo
+	@echo 2436 bit primes
+	@cp tableparams/avx512params_2436_3.h avx512params.h
+	@make -B avx512mppmns.exe >/dev/null
+	@./avx512mppmns.exe
+	@echo
+	@echo 2844 bit primes
+	@cp tableparams/avx512params_2844_3.h avx512params.h
+	@make -B avx512mppmns.exe >/dev/null
+	@./avx512mppmns.exe
+	@echo
+	@echo 3251 bit primes
+	@cp tableparams/avx512params_3251_3.h avx512params.h
+	@make -B avx512mppmns.exe >/dev/null
+	@./avx512mppmns.exe
+	@echo
+	@rm avx512params.h
+	@mv tavx512params.h avx512params.h 2>/dev/null || true
