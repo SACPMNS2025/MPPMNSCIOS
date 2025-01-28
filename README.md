@@ -1,7 +1,5 @@
 # Multi-precision PMNS with CIOS reduction
 
-CURRENTLY IN CONSTRUCTION
-
 This folder contains the code used to measure cycle counts in the relevant tables in the "Multi-precision PMNS with CIOS reduction" paper. You will need GCC and GnuMP to compile the codes. For the performances to be accurate on intel processors the Turbo Boost® needs to be disabled. For linux we provide the script "disableturboboost.sh" to disable the turbo boost. To run it:
 > chmod +x disableturboboost.sh && sudo ./disableturboboost.sh
 
@@ -14,4 +12,10 @@ Similarly, to run the benchmark for table 6 (your processor needs the cpuflag av
 Similarly, to run the benchmark for table 8 (your processor needs the cpuflag avx512ifma or the code won't run):
 > make table8
 
+Similarly, to run the benchmark for table 9 (your processor needs the cpuflag avx512ifma or the code won't run):
+> make table9
+
+## Generation
 We also make a multi-precision PMNS generation code available as well as an accompanying parameter generation script. To use them, you will need the SageMath library which can be found here: http://www.sagemath.org/
+
+The generation code is currently functional but needs file editing to use as is. In the short future it will be usable directly from the command line.
