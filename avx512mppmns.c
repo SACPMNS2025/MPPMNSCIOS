@@ -328,6 +328,7 @@ uint64_t do_bench(void (*pmns_mult)(restrict mppoly, const restrict mppoly, cons
 		memset(cycles,0,NTEST*sizeof(uint64_t));
 		for(int j=0;j<NTEST;j++)
 		{
+			printf("\b%d\t%d\r", i, j);
 			t1 = cpucyclesStart();
 			// We call the function W times to get an accurate measurement.
 			for(uint64_t soak=0; soak < W/3; soak++)
@@ -353,6 +354,8 @@ uint64_t do_bench(void (*pmns_mult)(restrict mppoly, const restrict mppoly, cons
 		medianTimer += statTimer[1];
 		free(statTimer);
 	}
+
+	printf("                                          \r");
 	
 	free(cycles);
 	return medianTimer/NSAMPLES/W; // We divide by W since we measured W calls.
