@@ -1,5 +1,5 @@
 MAKEFLAGS += --no-print-directory
-CC=gcc-12
+CC=gcc
 
 main: mppmns.exe
 	@make -B mppmns.exe 2>/dev/null
