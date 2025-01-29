@@ -19,7 +19,7 @@ Similarly, to run the benchmark for table 9 (your processor needs the cpuflag av
 ## Generation
 We also make a multi-precision PMNS generation code available as well as an accompanying parameter generation script. To use them, you will need the SageMath library which can be found here: http://www.sagemath.org/
 
-The generation code is currently functional but needs file editing to use as is. In the short future it will be usable directly from the command line.
+To use the generation code simply edit the values at the top of the python script (genmppmns.py) as needed. Then simply paste the output PMNS (p,n,gamma,lambda,rho) in (avx512)codegen.py at the appropriate spot. Run the generation script to generate a .h parameter file for the appropriate .c file.
 
 
 ## Correctness and bounds check
