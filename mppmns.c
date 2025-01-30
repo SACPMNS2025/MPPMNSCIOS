@@ -328,7 +328,7 @@ int main(void)
 	
 	
 	#ifndef NOBENCH
-	printf("cycles: %ld\n", do_bench(pmns_montg_mult,N>40 ? 3 : 33));
+	printf("This work s = %d: %ld\n", NBCHUNKS, do_bench(pmns_montg_mult,N>40 ? 3 : 33));
 	#endif
 	
 	FILE *fpointer = fopen("log", "w+");
