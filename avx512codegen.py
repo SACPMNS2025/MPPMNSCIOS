@@ -8,13 +8,10 @@ from avx512tableparams import pmnsdict
 s = 3
 delta = 0
 
-exception = False
 try:
 	psize = int(os.environ["PSIZE"])
 	s = int(os.environ["NBCHUNKS"])
 	(p,n,gamma,lam,rho) = pmnsdict[psize][s]
-	if psize == 8192 and s == 2:
-		exception = True
 except:
 	try:
 		psize = int(os.environ["PSIZE"])
@@ -68,28 +65,35 @@ G = matrix(ZZ,[[p if (k, j) == (0, 0) else -pow(gamma, k, p) if k != 0 and j == 
 PHI = 2**64
 ZZX = ZZ["X"]
 E = ZZX(f"X^{n} - {lam}")
-rho = max([sum([abs(G[j][i]) for j in range(n)]) for i in range(n)])
+rho = 2*max([sum([abs(G[j][i]) for j in range(n)]) for i in range(n)])
 w = abs(lam)*(n-1) + 1
 phi = 2*w*rho
-G1 = G.inverse() % phi
-v = [rho] * n
-phi_rep = vector([int(pow(phi, n+1, p))] + [0] * (n-1))
-slashphi = lambda vec: vector([elem//phi for elem in vec])
-for _ in range(n):
-	phi_rep = slashphi(phi_rep - (phi_rep*G1 % phi) * G)
-C = vector(list(ZZX(v) * ZZX(list(phi_rep)) % E))
-v2 = slashphi(C - (C*G1 % phi) * G)
-newzero = vector(v) - v2
-coeffs = newzero * G.inverse()
 allpos = lambda vec: bool(prod([elem >= 0 for elem in vec]))
-gradd = lambda vec, i: vector(list(vec[:i]) + [vec[i] - (vec[i]//(abs(vec[i]) + (vec[i] == 0)))] + list(vec[i+1:]))
-norminf = lambda vec: max([abs(elem) for elem in vec])
-for i in range(n):
-	if coeffs[i] == 0:
-		continue
+gha = max([max([abs(elem) for elem in lig]) for lig in G])
+v = vector([2*gha]*n)
+coeffs = v*G.inverse()
+coeffs = vector([round(elem) for elem in coeffs])
+if allpos(coeffs*G):
+	M = [int(elem) for elem in coeffs * G]
+else:
+	G1 = G.inverse() % phi
+	v = [rho//2] * n
+	phi_rep = vector([int(pow(phi, n+1, p))] + [0] * (n-1))
+	slashphi = lambda vec: vector([elem//phi for elem in vec])
+	for _ in range(n):
+		phi_rep = slashphi(phi_rep - (phi_rep*G1 % phi) * G)
+	C = vector(list(ZZX(v) * ZZX(list(phi_rep)) % E))
+	v2 = slashphi(C - (C*G1 % phi) * G)
+	newzero = vector(v) - v2
+	coeffs = newzero * G.inverse()
+	gradd = lambda vec, i: vector(list(vec[:i]) + [vec[i] - (vec[i]//(abs(vec[i]) + (vec[i] == 0)))] + list(vec[i+1:]))
+	norminf = lambda vec: max([abs(elem) for elem in vec])
+	for i in range(n):
+		if coeffs[i] == 0:
+			continue
 	while allpos(gradd(coeffs, i)*G) and norminf(gradd(coeffs, i)*G) < norminf(coeffs*G):
 		coeffs = gradd(coeffs, i)
-M = [int(elem) for elem in coeffs * G]
+	M = [int(elem) for elem in coeffs * G]
 while M[0] % lam == 0:
 	M = M[1:] + [M[0]//lam]
 norm1 = lambda V: sum([abs(elem) for elem in V])
@@ -108,8 +112,6 @@ while rhohi*2**NBCHUNKS < 2**rhover2:
 else:
 	rhover2 += 1
 rhover2 += 1
-if exception:
-	rhover2 += 2
 rhohi = rho//2**(rhover2*(NBCHUNKS-1))
 philog2 = rhover2*NBCHUNKS
 

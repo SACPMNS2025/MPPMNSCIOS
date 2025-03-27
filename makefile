@@ -155,7 +155,7 @@ table8:
 	@./avx512mppmns.exe
 	@$(CC) -o opensslavx512.exe opensslavx512.c rsaz-3k-avx512.s -g -Wall -Wextra -O3 -funswitch-loops -funroll-loops -fno-tree-vectorize -march=native -D LOG2P=1536 -lgmp -lcrypto -flto && ./opensslavx512.exe
 	@echo 2048 bit primes
-	@cp tableparams/avx512params_2048_3.h avx512params.h
+	@cp tableparams/avx512params_2048_6.h avx512params.h
 	@make -B avx512mppmns.exe >/dev/null
 	@./avx512mppmns.exe
 	@$(CC) -o opensslavx512.exe opensslavx512.c rsaz-4k-avx512.s -g -Wall -Wextra -O3 -funswitch-loops -funroll-loops -fno-tree-vectorize -march=native -D LOG2P=2048 -lgmp -lcrypto -flto && ./opensslavx512.exe
@@ -357,10 +357,10 @@ checktable8:
 	@./avx512mppmns.exe
 	@export PSIZE=1536 && python3 avx512check.py
 	@echo 2048 bit primes
-	@cp tableparams/avx512params_2048_3.h avx512params.h
+	@cp tableparams/avx512params_2048_6.h avx512params.h
 	@$(CC) -o avx512mppmns.exe avx512mppmns.c -g -Wall -Wextra -O3 -funswitch-loops -funroll-loops -fno-tree-vectorize -fwhole-program -march=native -D NOBENCH
 	@./avx512mppmns.exe
-	@export PSIZE=2048 && export NBCHUNKS=3 && python3 avx512check.py
+	@export PSIZE=2048 && export NBCHUNKS=6 && python3 avx512check.py
 	@rm avx512params.h
 	@mv tavx512params.h avx512params.h 2>/dev/null || true
 

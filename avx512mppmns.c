@@ -11,9 +11,9 @@
 #define LOW(X) ((uint64_t)X)
 #define HIGH(X) ((int64_t)(X>>64))
 
+#include "avx512params.h"
 #include "avx512toeplitzmacros.h"
 
-#include "avx512params.h"
 
 
 __m512i MAVX[NBCHUNKS][2*N - 1];
@@ -52,14 +52,70 @@ void randpoly(mppoly P)
 	}
 }
 
+#if N == 120
+static inline void schoolbook(__m512i* restrict rophi, __m512i* restrict roplo, const __m512i* restrict vect, const __m512i* restrict matr)
+	SCHOOLBOOK(N/15)
+
+static inline void midtoep(__m512i* restrict rophi, __m512i* restrict roplo, const __m512i* restrict vect, const __m512i* restrict matr)
+	TOEP55TOP(N/3,schoolbook)
+
+static inline void toeplitz_vm(__m512i* restrict rophi, __m512i* restrict roplo, const __m512i* restrict vect, const __m512i* restrict matr)
+	TOEP33TOP(N,midtoep)
+#else
+#if N == 80
+static inline void schoolbook(__m512i* restrict rophi, __m512i* restrict roplo, const __m512i* restrict vect, const __m512i* restrict matr)
+	SCHOOLBOOK(N/10)
+
+static inline void midtoep(__m512i* restrict rophi, __m512i* restrict roplo, const __m512i* restrict vect, const __m512i* restrict matr)
+	TOEP55TOP(N/2,schoolbook)
+
+static inline void toeplitz_vm(__m512i* restrict rophi, __m512i* restrict roplo, const __m512i* restrict vect, const __m512i* restrict matr)
+	TOEP22TOP(N,midtoep)
+#else
+#if N == 64
+static inline void schoolbook(__m512i* restrict rophi, __m512i* restrict roplo, const __m512i* restrict vect, const __m512i* restrict matr)
+	SCHOOLBOOK(N/8)
+
+static inline void midtoep2(__m512i* restrict rophi, __m512i* restrict roplo, const __m512i* restrict vect, const __m512i* restrict matr)
+	TOEP22TOP(N/4,schoolbook)
+
+static inline void midtoep(__m512i* restrict rophi, __m512i* restrict roplo, const __m512i* restrict vect, const __m512i* restrict matr)
+	TOEP22TOP(N/2,midtoep2)
+
+static inline void toeplitz_vm(__m512i* restrict rophi, __m512i* restrict roplo, const __m512i* restrict vect, const __m512i* restrict matr)
+	TOEP22TOP(N,midtoep)
+#else
+#if N == 48
+static inline void schoolbook(__m512i* restrict rophi, __m512i* restrict roplo, const __m512i* restrict vect, const __m512i* restrict matr)
+	SCHOOLBOOK(N/6)
+
+static inline void midtoep(__m512i* restrict rophi, __m512i* restrict roplo, const __m512i* restrict vect, const __m512i* restrict matr)
+	TOEP33TOP(N/2,schoolbook)
+
+static inline void toeplitz_vm(__m512i* restrict rophi, __m512i* restrict roplo, const __m512i* restrict vect, const __m512i* restrict matr)
+	TOEP22TOP(N,midtoep)
+#else
 // Toeplitz standard vector matrix multiplication
 static inline void toeplitz_vm(__m512i* restrict rophi, __m512i* restrict roplo, const __m512i* restrict vect, const __m512i* restrict matr)
 	SCHOOLBOOK(N)
+#endif
+#endif
+#endif
+#endif
 
+#if N == 120
+static inline void ptoeplitz_vm(__m512i* restrict rophi, __m512i* restrict roplo, const __m512i* restrict vect, const __m512i* restrict matr)
+	pTOEP33TOP(N,midtoep)
+#else
+#if N == 80 || N == 64 || N == 48
+static inline void ptoeplitz_vm(__m512i* restrict rophi, __m512i* restrict roplo, const __m512i* restrict vect, const __m512i* restrict matr)
+	pTOEP22TOP(N,midtoep)
+#else
 // Toeplitz version where the result is added to rop instead of erasing
 static inline void ptoeplitz_vm(__m512i* restrict rophi, __m512i* restrict roplo, const __m512i* restrict vect, const __m512i* restrict matr)
 	pSCHOOLBOOK(N)
-
+#endif
+#endif
 
 // Toeplitz version where only the low part of the result matters
 static inline void m1toep20(__m512i* restrict rop, const __m512i* restrict vect, const __m512i* restrict matr)
