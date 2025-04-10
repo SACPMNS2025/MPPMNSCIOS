@@ -111,7 +111,7 @@ while rhohi*2**NBCHUNKS < 2**rhover2:
 	rhohi = rho//2**(rhover2*(NBCHUNKS-1))
 else:
 	rhover2 += 1
-rhover2 += (rhover2 != 50)
+rhover2 += (rhover2 != 49)
 rhohi = rho//2**(rhover2*(NBCHUNKS-1))
 philog2 = rhover2*NBCHUNKS
 
