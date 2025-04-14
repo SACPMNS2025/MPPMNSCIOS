@@ -18,6 +18,16 @@
 
 __m512i MAVX[NBCHUNKS][2*N - 1];
 __m512i M1AVX[2*N - 1];
+#if N % 16 == 0
+__m512i M1avxm0m1[N - 1];
+__m512i M1avxm0m2[N - 1];
+#endif
+#if N % 32 == 0
+__m512i M1avxm0m1m0m1[N/2 - 1];
+__m512i M1avxm0m1m0m2[N/2 - 1];
+__m512i M1avxm0m2m0m1[N/2 - 1];
+__m512i M1avxm0m2m0m2[N/2 - 1];
+#endif
 
 typedef struct
 {
@@ -83,26 +93,26 @@ static inline void midtoep(__m512i* restrict rophi, __m512i* restrict roplo, con
 static inline void toeplitz_vm(__m512i* restrict rophi, __m512i* restrict roplo, const __m512i* restrict vect, const __m512i* restrict matr)
 	TOEP22TOP(N,midtoep,smidtoep)
 #elif N == 64
-static inline void sschoolbook(__m512i* restrict rophi, __m512i* restrict roplo, const __m512i* restrict vect, const __m512i* restrict matr)
-	sSCHOOLBOOK(N/8)
+static inline void vschoolbook(__m512i* restrict rophi, __m512i* restrict roplo, const __m512i* restrict vect, const __m512i* restrict matr)
+	vSCHOOLBOOK(N/8)
 
 static inline void schoolbook(__m512i* restrict rophi, __m512i* restrict roplo, const __m512i* restrict vect, const __m512i* restrict matr)
 	SCHOOLBOOK(N/8)
 
-static inline void smidtoep2(__m512i* restrict rophi, __m512i* restrict roplo, const __m512i* restrict vect, const __m512i* restrict matr)
-	TOEP22TOP(N/4,sschoolbook,sschoolbook)
+static inline void vmidtoep2(__m512i* restrict rophi, __m512i* restrict roplo, const __m512i* restrict vect, const __m512i* restrict matr)
+	vTOEP22TOP(N/4,vschoolbook,vschoolbook)
 
 static inline void midtoep2(__m512i* restrict rophi, __m512i* restrict roplo, const __m512i* restrict vect, const __m512i* restrict matr)
-	TOEP22TOP(N/4,schoolbook,sschoolbook)
+	vTOEP22TOP(N/4,vschoolbook,schoolbook)
 
-static inline void smidtoep(__m512i* restrict rophi, __m512i* restrict roplo, const __m512i* restrict vect, const __m512i* restrict matr)
-	TOEP22TOP(N/2,smidtoep2,smidtoep2)
+static inline void vmidtoep(__m512i* restrict rophi, __m512i* restrict roplo, const __m512i* restrict vect, const __m512i* restrict matr)
+	vTOEP22TOP(N/2,vmidtoep2,vmidtoep2)
 
 static inline void midtoep(__m512i* restrict rophi, __m512i* restrict roplo, const __m512i* restrict vect, const __m512i* restrict matr)
-	TOEP22TOP(N/2,midtoep2,smidtoep2)
+	vTOEP22TOP(N/2,vmidtoep2,midtoep2)
 
 static inline void toeplitz_vm(__m512i* restrict rophi, __m512i* restrict roplo, const __m512i* restrict vect, const __m512i* restrict matr)
-	TOEP22TOP(N,midtoep,smidtoep)
+	vTOEP22TOP(N,vmidtoep,midtoep)
 #elif N == 48
 static inline void sschoolbook(__m512i* restrict rophi, __m512i* restrict roplo, const __m512i* restrict vect, const __m512i* restrict matr)
 	sSCHOOLBOOK(N/6)
@@ -127,6 +137,21 @@ static inline void schoolbook(__m512i* restrict rophi, __m512i* restrict roplo, 
 
 static inline void toeplitz_vm(__m512i* restrict rophi, __m512i* restrict roplo, const __m512i* restrict vect, const __m512i* restrict matr)
 	TOEP55TOP(N,schoolbook,sschoolbook)
+#elif N == 32
+static inline void vschoolbook(__m512i* restrict rophi, __m512i* restrict roplo, const __m512i* restrict vect, const __m512i* restrict matr)
+	vSCHOOLBOOK(N/4)
+
+static inline void schoolbook(__m512i* restrict rophi, __m512i* restrict roplo, const __m512i* restrict vect, const __m512i* restrict matr)
+	SCHOOLBOOK(N/4)
+
+static inline void vmidtoep(__m512i* restrict rophi, __m512i* restrict roplo, const __m512i* restrict vect, const __m512i* restrict matr)
+	vTOEP22TOP(N/2,vschoolbook,vschoolbook)
+
+static inline void midtoep(__m512i* restrict rophi, __m512i* restrict roplo, const __m512i* restrict vect, const __m512i* restrict matr)
+	vTOEP22TOP(N/2,vschoolbook,schoolbook)
+
+static inline void toeplitz_vm(__m512i* restrict rophi, __m512i* restrict roplo, const __m512i* restrict vect, const __m512i* restrict matr)
+	vTOEP22TOP(N,vmidtoep,midtoep)
 #elif N == 24
 static inline void sschoolbook(__m512i* restrict rophi, __m512i* restrict roplo, const __m512i* restrict vect, const __m512i* restrict matr)
 	sSCHOOLBOOK(N/3)
@@ -145,9 +170,12 @@ static inline void toeplitz_vm(__m512i* restrict rophi, __m512i* restrict roplo,
 #if N == 120
 static inline void ptoeplitz_vm(__m512i* restrict rophi, __m512i* restrict roplo, const __m512i* restrict vect, const __m512i* restrict matr)
 	pTOEP33TOP(N,midtoep,smidtoep)
-#elif N == 80 || N == 64 || N == 48
+#elif N == 80 || N == 48
 static inline void ptoeplitz_vm(__m512i* restrict rophi, __m512i* restrict roplo, const __m512i* restrict vect, const __m512i* restrict matr)
 	pTOEP22TOP(N,midtoep,smidtoep)
+#elif N == 64 || N == 32
+static inline void ptoeplitz_vm(__m512i* restrict rophi, __m512i* restrict roplo, const __m512i* restrict vect, const __m512i* restrict matr)
+	vpTOEP22TOP(N,vmidtoep,midtoep)
 #elif N == 40
 static inline void ptoeplitz_vm(__m512i* restrict rophi, __m512i* restrict roplo, const __m512i* restrict vect, const __m512i* restrict matr)
 	pTOEP55TOP(N,schoolbook,sschoolbook)
@@ -464,6 +492,24 @@ int main(void)
 {
 	for(int j = 0; j < 2*N-1; j++)
 		M1AVX[j] = _mm512_set_epi64(M1[(j+7)%(2*N-1)], M1[(j+6)%(2*N-1)], M1[(j+5)%(2*N-1)], M1[(j+4)%(2*N-1)], M1[(j+3)%(2*N-1)], M1[(j+2)%(2*N-1)], M1[(j+1)%(2*N-1)], M1[(j+0)%(2*N-1)]);
+	
+	#if N % 16 == 0
+	for(int i = 0; i < N-1; i++)
+	{
+		M1avxm0m1[i] = _mm512_add_epi64(M1AVX[i+N/2],M1AVX[i+N]);
+		M1avxm0m2[i] = _mm512_add_epi64(M1AVX[i+N/2],M1AVX[i]);
+	}
+	#endif
+	#if N % 32 == 0
+	for(int i = 0; i < N/2-1; i++)
+	{
+		M1avxm0m1m0m1[i] = _mm512_add_epi64(M1avxm0m1[i+N/4],M1avxm0m1[i+N/2]);
+		M1avxm0m1m0m2[i] = _mm512_add_epi64(M1avxm0m1[i+N/4],M1avxm0m1[i]);
+		M1avxm0m2m0m1[i] = _mm512_add_epi64(M1avxm0m2[i+N/4],M1avxm0m2[i+N/2]);
+		M1avxm0m2m0m2[i] = _mm512_add_epi64(M1avxm0m2[i+N/4],M1avxm0m2[i]);
+	}
+	#endif
+	
 	
 	for(int i = 0; i < NBCHUNKS; i++)
 	{
