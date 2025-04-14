@@ -187,6 +187,74 @@ void v_mm512_madd52_epi64(__m512i* rethi, __m512i* retlo, __m512i op1, __m512i o
 	}\
 }
 
+#define vTOEP33TOP(X, F, G) {\
+	__m512i t0[X/24], t1[X/24], t2[X/24], t3[X/24], t4[X/24], t5[X/24];\
+	__m512i t0hi[X/24], t1hi[X/24], t2hi[X/24], t3hi[X/24], t4hi[X/24], t5hi[X/24];\
+	__m512i v1m2[X/24], v0m2[X/24], v0m1[X/24], m034[X/12], m013[X/12], m012[X/12], m03;\
+	for(int i = 0; i < X/24; i++)\
+	{\
+		v1m2[i] = _mm512_sub_epi64(vect[X/24 + i],vect[2*X/24 + i]);\
+		v0m1[i] = _mm512_sub_epi64(vect[i],vect[X/24 + i]);\
+		v0m2[i] = _mm512_sub_epi64(vect[i],vect[2*X/24 + i]);\
+	}\
+	for(int i = 0; i < X/12; i++)\
+	{\
+		m03 = _mm512_add_epi64(matr[i + 2*X/24],matr[i + X/24]);\
+		m034[i] = _mm512_add_epi64(matr[i], m03);\
+		m013[i] = _mm512_add_epi64(matr[i + 3*X/24], m03);\
+		m012[i] = _mm512_add_epi64(matr[i + 4*X/24], _mm512_add_epi64(matr[i + 2*X/24],matr[i + 3*X/24]));\
+	}\
+	G (t0hi, t0, vect + 2*X/24, m034);\
+	G (t1hi, t1, vect + X/24, m013);\
+	G (t2hi, t2, vect, m012);\
+	F (t3hi, t3, v1m2,  matr + X/24);\
+	F (t4hi, t4, v0m2, matr + 2*X/24);\
+	F (t5hi, t5, v0m1,  matr + X/8);\
+	for(int i = 0; i < X/24; i++)\
+	{\
+		roplo[i] = _mm512_add_epi64(t0[i],_mm512_add_epi64(t3[i],t4[i]));\
+		rophi[i] = _mm512_add_epi64(t0hi[i],_mm512_add_epi64(t3hi[i],t4hi[i]));\
+		roplo[i+X/24] = _mm512_add_epi64(t1[i],_mm512_sub_epi64(t5[i],t3[i]));\
+		rophi[i+X/24] = _mm512_add_epi64(t1hi[i],_mm512_sub_epi64(t5hi[i],t3hi[i]));\
+		roplo[i+2*X/24] = _mm512_sub_epi64(t2[i],_mm512_add_epi64(t4[i],t5[i]));\
+		rophi[i+2*X/24] = _mm512_sub_epi64(t2hi[i],_mm512_add_epi64(t4hi[i],t5hi[i]));\
+	}\
+}
+
+#define vpTOEP33TOP(X, F, G) {\
+	__m512i t0[X/24], t1[X/24], t2[X/24], t3[X/24], t4[X/24], t5[X/24];\
+	__m512i t0hi[X/24], t1hi[X/24], t2hi[X/24], t3hi[X/24], t4hi[X/24], t5hi[X/24];\
+	__m512i v1m2[X/24], v0m2[X/24], v0m1[X/24], m034[X/12], m013[X/12], m012[X/12], m03;\
+	for(int i = 0; i < X/24; i++)\
+	{\
+		v1m2[i] = _mm512_sub_epi64(vect[X/24 + i],vect[2*X/24 + i]);\
+		v0m1[i] = _mm512_sub_epi64(vect[i],vect[X/24 + i]);\
+		v0m2[i] = _mm512_sub_epi64(vect[i],vect[2*X/24 + i]);\
+	}\
+	for(int i = 0; i < X/12; i++)\
+	{\
+		m03 = _mm512_add_epi64(matr[i + 2*X/24],matr[i + X/24]);\
+		m034[i] = _mm512_add_epi64(matr[i], m03);\
+		m013[i] = _mm512_add_epi64(matr[i + X/8], m03);\
+		m012[i] = _mm512_add_epi64(matr[i + 4*X/24], _mm512_add_epi64(matr[i + 2*X/24],matr[i + X/8]));\
+	}\
+	G (t0hi, t0, vect + 2*X/24, m034);\
+	G (t1hi, t1, vect + X/24, m013);\
+	G (t2hi, t2, vect, m012);\
+	F (t3hi, t3, v1m2,  matr + X/24);\
+	F (t4hi, t4, v0m2, matr + 2*X/24);\
+	F (t5hi, t5, v0m1,  matr + X/8);\
+	for(int i = 0; i < X/24; i++)\
+	{\
+		roplo[i] = _mm512_add_epi64(roplo[i],_mm512_add_epi64(t0[i],_mm512_add_epi64(t3[i],t4[i])));\
+		rophi[i] = _mm512_add_epi64(rophi[i],_mm512_add_epi64(t0hi[i],_mm512_add_epi64(t3hi[i],t4hi[i])));\
+		roplo[i+X/24] = _mm512_add_epi64(roplo[i+X/24],_mm512_add_epi64(t1[i],_mm512_sub_epi64(t5[i],t3[i])));\
+		rophi[i+X/24] = _mm512_add_epi64(rophi[i+X/24],_mm512_add_epi64(t1hi[i],_mm512_sub_epi64(t5hi[i],t3hi[i])));\
+		roplo[i+2*X/24] = _mm512_add_epi64(roplo[i+2*X/24],_mm512_sub_epi64(t2[i],_mm512_add_epi64(t4[i],t5[i])));\
+		rophi[i+2*X/24] = _mm512_add_epi64(rophi[i+2*X/24],_mm512_sub_epi64(t2hi[i],_mm512_add_epi64(t4hi[i],t5hi[i])));\
+	}\
+}
+
 #define TOEP55TOP(X, F, G) {\
 	__m512i t0[X/40], t1[X/40], t2[X/40], t3[X/40], t4[X/40], t5[X/40], t6[X/40], t7[X/40], t8[X/40], t9[X/40], t10[X/40], t11[X/40], t12[X/40], t13[X/40], t14[X/40];\
 	__m512i t0hi[X/40], t1hi[X/40], t2hi[X/40], t3hi[X/40], t4hi[X/40], t5hi[X/40], t6hi[X/40], t7hi[X/40], t8hi[X/40], t9hi[X/40], t10hi[X/40], t11hi[X/40], t12hi[X/40], t13hi[X/40], t14hi[X/40];\
@@ -317,7 +385,7 @@ void v_mm512_madd52_epi64(__m512i* rethi, __m512i* retlo, __m512i op1, __m512i o
 		rophi[i] = _mm512_setzero_si512();\
 		for(int j = 0; j < X/8; j++)\
 		{\
-			_mm512_madd52_epu64(rophi + i, roplo + i, _mm512_broadcastq_epi64(_mm512_castsi512_si128(vect[j])), _mm512_alignr_epi64(matr[X/8+i-j], matr[X/8+i-1-j],7-0));\
+			_mm512_madd52_epu64(rophi + i, roplo + i, _mm512_set1_epi64(vecv[j][0]), _mm512_alignr_epi64(matr[X/8+i-j], matr[X/8+i-1-j],7-0));\
 			_mm512_madd52_epu64(rophi + i, roplo + i, _mm512_set1_epi64(vecv[j][1]), _mm512_alignr_epi64(matr[X/8+i-j], matr[X/8+i-1-j],7-1));\
 			_mm512_madd52_epu64(rophi + i, roplo + i, _mm512_set1_epi64(vecv[j][2]), _mm512_alignr_epi64(matr[X/8+i-j], matr[X/8+i-1-j],7-2));\
 			_mm512_madd52_epu64(rophi + i, roplo + i, _mm512_set1_epi64(vecv[j][3]), _mm512_alignr_epi64(matr[X/8+i-j], matr[X/8+i-1-j],7-3));\
@@ -339,7 +407,7 @@ void v_mm512_madd52_epi64(__m512i* rethi, __m512i* retlo, __m512i op1, __m512i o
 		rophi[i] = _mm512_setzero_si512();\
 		for(int j = 0; j < X/8; j++)\
 		{\
-			_mm512_madd52_epi64(rophi + i, roplo + i, _mm512_broadcastq_epi64(_mm512_castsi512_si128(vect[j])), _mm512_alignr_epi64(matr[X/8+i-j], matr[X/8+i-1-j],7-0));\
+			_mm512_madd52_epi64(rophi + i, roplo + i, _mm512_set1_epi64(vecv[j][0]), _mm512_alignr_epi64(matr[X/8+i-j], matr[X/8+i-1-j],7-0));\
 			_mm512_madd52_epi64(rophi + i, roplo + i, _mm512_set1_epi64(vecv[j][1]), _mm512_alignr_epi64(matr[X/8+i-j], matr[X/8+i-1-j],7-1));\
 			_mm512_madd52_epi64(rophi + i, roplo + i, _mm512_set1_epi64(vecv[j][2]), _mm512_alignr_epi64(matr[X/8+i-j], matr[X/8+i-1-j],7-2));\
 			_mm512_madd52_epi64(rophi + i, roplo + i, _mm512_set1_epi64(vecv[j][3]), _mm512_alignr_epi64(matr[X/8+i-j], matr[X/8+i-1-j],7-3));\
@@ -361,7 +429,7 @@ void v_mm512_madd52_epi64(__m512i* rethi, __m512i* retlo, __m512i op1, __m512i o
 		rophi[i] = _mm512_setzero_si512();\
 		for(int j = 0; j < X/8; j++)\
 		{\
-			v_mm512_madd52_epi64(rophi + i, roplo + i, _mm512_broadcastq_epi64(_mm512_castsi512_si128(vect[j])), _mm512_alignr_epi64(matr[X/8+i-j], matr[X/8+i-1-j],7-0));\
+			v_mm512_madd52_epi64(rophi + i, roplo + i, _mm512_set1_epi64(vecv[j][0]), _mm512_alignr_epi64(matr[X/8+i-j], matr[X/8+i-1-j],7-0));\
 			v_mm512_madd52_epi64(rophi + i, roplo + i, _mm512_set1_epi64(vecv[j][1]), _mm512_alignr_epi64(matr[X/8+i-j], matr[X/8+i-1-j],7-1));\
 			v_mm512_madd52_epi64(rophi + i, roplo + i, _mm512_set1_epi64(vecv[j][2]), _mm512_alignr_epi64(matr[X/8+i-j], matr[X/8+i-1-j],7-2));\
 			v_mm512_madd52_epi64(rophi + i, roplo + i, _mm512_set1_epi64(vecv[j][3]), _mm512_alignr_epi64(matr[X/8+i-j], matr[X/8+i-1-j],7-3));\
@@ -381,7 +449,7 @@ void v_mm512_madd52_epi64(__m512i* rethi, __m512i* retlo, __m512i op1, __m512i o
 	{\
 		for(int j = 0; j < X/8; j++)\
 		{\
-			_mm512_madd52_epu64(rophi + i, roplo + i, _mm512_broadcastq_epi64(_mm512_castsi512_si128(vect[j])), _mm512_alignr_epi64(matr[X/8+i-j], matr[X/8+i-1-j],7-0));\
+			_mm512_madd52_epu64(rophi + i, roplo + i, _mm512_set1_epi64(vecv[j][0]), _mm512_alignr_epi64(matr[X/8+i-j], matr[X/8+i-1-j],7-0));\
 			_mm512_madd52_epu64(rophi + i, roplo + i, _mm512_set1_epi64(vecv[j][1]), _mm512_alignr_epi64(matr[X/8+i-j], matr[X/8+i-1-j],7-1));\
 			_mm512_madd52_epu64(rophi + i, roplo + i, _mm512_set1_epi64(vecv[j][2]), _mm512_alignr_epi64(matr[X/8+i-j], matr[X/8+i-1-j],7-2));\
 			_mm512_madd52_epu64(rophi + i, roplo + i, _mm512_set1_epi64(vecv[j][3]), _mm512_alignr_epi64(matr[X/8+i-j], matr[X/8+i-1-j],7-3));\
