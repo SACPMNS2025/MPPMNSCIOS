@@ -36,6 +36,8 @@ else:  # general guidelines (heuristic)
 		elif tmpn % 3 == 0:
 			TOEPSPLIT += [3]
 			tmpn //= 3
+		else:
+			break
 
 
 NBCHUNKS = s
